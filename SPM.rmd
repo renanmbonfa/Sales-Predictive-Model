@@ -1,5 +1,5 @@
 ---
-title: "TRABALHO - APA.rmd"
+title: "APA.rmd"
 author: "Renan Bonfá"
 date: "20/11/2021"
 output:
@@ -11,7 +11,7 @@ output:
 # Tratamento dos dados
 
 ```{r}
-#IMPORTANDO BIBLIOTECAS 2
+#IMPORTANDO BIBLIOTECAS 2  
 options(warn=-1)
 
 library(broom)
