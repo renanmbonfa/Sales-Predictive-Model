@@ -6,14 +6,12 @@ output:
   word_document: default
   html_document: default
 ---
-
-
-# Tratamento dos dados
+# Data processing
 
 ```{r}
-#IMPORTANDO BIBLIOTECAS 2  
-options(warn=-1)
+# IMPORTING LIBRARIES 2
 
+options(warn=-1)
 library(broom)
 library(corrplot)
 library(caret)
@@ -29,23 +27,23 @@ library(kernlab)
 ```
 
 ```{r}
-#Leitura arquivo
+#Read file
 
 setwd("~/R Projects/APA - IND/Dataset")
 df <- read.csv(file = "Retail.csv", sep =",", dec = ",")
 ```
 
 ```{r}
-#Avaliar dados
+# Evaluate data
 head(df,10)
 summary(df)
 ```
 
-### Transformando váriaveis
+### Transforming variables
 ```{r}
 ncol(df)
 
-#Transformando var caracteres em numericas
+# Converting var characters to numeric
 df$Temperature <- as.numeric(df$Temperature)
 df$Fuel_Price <- as.numeric(df$Fuel_Price)
 df$MarkDown1 <- as.numeric(df$MarkDown1)
@@ -57,69 +55,69 @@ df$CPI <- as.numeric(df$CPI)
 df$Unemployment <- as.numeric(df$Unemployment)
 df$Weekly_Sales <- as.numeric(df$Weekly_Sales)
 
-#Data
+#Date
 df$Date <- as.Date(df$Date)
 
-#Tranformando as var categoricas em fatores
+#Turning categorical vars into factors
 df$Store <- as.factor(df$Store)
 df$IsHoliday <- as.factor(df$IsHoliday)
 
-#revisando  
+# reviewing
 head(df)
 summary(df)
 ```
 
-### Boxplosts e Histogramas 
-**Verificação da distribuição dos dados**
+### Boxplosts and Histograms
+**Verification of data distribution**
 ```{r}
-#Boxplots e Histogramas
-colnames(df)
+#Boxplots and Histograms
+columns(df)
 head(df)
 
 #Table (df$Store)
 table(df$Store)
 
-#Boxplot e Histograma (df$Temperature)
+#Boxplot and Histogram (df$Temperature)
 par(mfrow = c(1,2))
 boxplot(df$Temperature,main = "Boxplot - df$Temperature")
 hist(df$Temperature)
 
-#Boxplot e Histograma (df$Fuel_Price)
+#Boxplot and Histogram (df$Fuel_Price)
 par(mfrow = c(1,2))
 boxplot(df$Fuel_Price, main = "Boxplot - df$Fuel_Price")
 hist(df$Fuel_Price)
 
-#Boxplot e Histograma (df$Mardown1)
+#Boxplot and Histogram (df$Mardown1)
 par(mfrow = c(1,2))
 boxplot(df$MarkDown1, main = "Boxplot - df$Markdown1")
 hist(df$MarkDown1)
 
-#Boxplot e Histograma (df$Markdown2)
+#Boxplot and Histogram (df$Markdown2)
 par(mfrow = c(1,2))
 boxplot(df$MarkDown2, main = "Boxplot - df$Markdown2")
 hist(df$MarkDown2)
 
-#Boxplot e Histograma (df$Markdown3)
+#Boxplot and Histogram (df$Markdown3)
 par(mfrow = c(1,2))
 boxplot(df$MarkDown3, main = "Boxplot - df$Markdown3")
 hist(df$MarkDown3)
 
-#Boxplot e Histograma (df$Markdown4)
+#Boxplot and Histogram (df$Markdown4)
 par(mfrow = c(1,2))
 boxplot(df$MarkDown4, main = "Boxplot - df$Markdown4")
 hist(df$MarkDown4)
 
-#Boxplot e Histograma (df$Markdown5)
+#Boxplot and Histogram (df$Markdown5)
 par(mfrow = c(1,2))
 boxplot(df$MarkDown5, main = "Boxplot - df$Markdown5")
 hist(df$MarkDown5)
 
-#Boxplot e Histograma (df$CPI)
+#Boxplot and Histogram (df$CPI)
 par(mfrow = c(1,2))
 boxplot(df$CPI, main = "Boxplot - df$CPI")
 hist(df$CPI)
 
-#Boxplot e Histograma (df$Unemployment)
+#Boxplot and Histogram (df$Unemployment)
 par(mfrow = c(1,2))
 boxplot(df$Unemployment, main = "Boxplot - df$Unemployment")
 hist(df$Unemployment)
@@ -127,30 +125,29 @@ hist(df$Unemployment)
 #Table(df$IsHoliday)
 table(df$IsHoliday)
 
-#Boxplot e Histograma (df$Weekly_Sales)
+#Boxplot and Histogram (df$Weekly_Sales)
 par(mfrow = c(1,2))
 boxplot(df$Weekly_Sales, main = "Boxplot - df$Weekly_Sales")
 hist(df$Weekly_Sales)
 ```
 
-### Percentual de NAs por coluna
+### Percentage of NAs per column
 ```{r}
-#missing data por colunas
+#missing data by columns
 
 md_df <- for(i in 1:length(df)) {
-  print(paste(colnames(df[i]),
-              "possui % de NAs de",
-              round(sum(is.na(df[ ,i]))/nrow(df),2)))
+   print(paste(colnames(df[i]),
+               "has % of NAs of",
+               round(sum(is.na(df[,i]))/nrow(df),2)))
   
 }
 
-
 ```
 
-### Redefinindo NAs
+### Redefining NAs
 ```{r}
-#Como nas Variáveis Mardown 1-5 os dados estão mal distribuídos, atribuí aos valores NA
-# a mediana, para cada variável respectiva.
+#As in Mardown Variables 1-5 the data are poorly distributed, I assigned the NA values
+# the median, for each respective variable.
 
 df$MarkDown1[is.na(df$MarkDown1)] <- median(df$MarkDown1, na.rm = TRUE)
 df$MarkDown2[is.na(df$MarkDown2)] <- median(df$MarkDown2, na.rm = TRUE)
@@ -158,21 +155,21 @@ df$MarkDown3[is.na(df$MarkDown3)] <- median(df$MarkDown3, na.rm = TRUE)
 df$MarkDown4[is.na(df$MarkDown4)] <- median(df$MarkDown4, na.rm = TRUE)
 df$MarkDown5[is.na(df$MarkDown5)] <- median(df$MarkDown5, na.rm = TRUE)
 
-#Decidi rejeitar os NAs de CPI e Unemployment por serem menos reprensentativos no dataset
-#Sumindo com os NAs de CPI,os NAs de Unemployment somem automaticamente, pois são os mesmos
+#I decided to reject the CPI and Unemployment NAs as they are less representative in the dataset
+# By disappearing with the CPI NAs, the Unemployment NAs automatically disappear, as they are the same
 
 df <- subset(df, CPI != "NA")
 
-#Var preditiva se aproxima mais de uma distribuição normal. Por isso, atribui os valores
-# NA a media dos valores
+#Var predictive more closely approximates a normal distribution. Therefore, assign the values
+# NA the average of the values
 
 df$Weekly_Sales[is.na(df$Weekly_Sales)] <- mean(df$Weekly_Sales, na.rm = TRUE)
 
-#Verificação de NAs
+# NA verification
 colSums(is.na(df))
 ```
 
-### CORR-PLOT- Matriz de correlação
+### CORR-PLOT- Correlation matrix
 ```{r}
 #CORR-PLOT
 MC <- cor(df[ ,c(-1,-2,-12)])
@@ -189,7 +186,7 @@ PLOT <- corrplot(corr = MC,
                  number.cex = 0.7)
 ```
 
-### Separandos os dados
+### Separating the data
 ```{r}
 set.seed(314)
 
@@ -202,11 +199,11 @@ dfTest  <- df[-trainIndex,]
 summary(df)
 ```
 
-# Implementação dos modelos
+# Implementation of models
 
-## REGRESSÃO LINEAR - MODELO 1**
+## LINEAR REGRESSION - MODEL 1**
 ```{r}
-#cross-validation (nem usei)
+#cross-validation 
 cv <- trainControl(method = "repeatedcv", number = 10, savePredictions = TRUE, classProbs = FALSE)
 ```
 
@@ -233,13 +230,13 @@ dfTest$Model_reglin <- pred_Model_reglin
 head(dfTest)
 ```
 
-## ÁRVORES DE DECISÃO
+## DECISION TREES
 ```{r}
 #cross-validation
 cv <- trainControl(method = "repeatedcv", number = 10, savePredictions = TRUE, classProbs = FALSE)
 ```
 
-### BAGGING -MODELO 2
+### BAGGING -MODEL 2
 ```{r}
 set.seed(314)
 
@@ -255,7 +252,7 @@ imp_bagging
 plot(imp_bagging)
 ```
 
-### BOOSTING - MODELO 3
+### BOOSTING - MODEL 3
 ```{r}
 set.seed(314)
 
@@ -272,7 +269,7 @@ imp_boosting
 plot(imp_boosting)
 ```
 
-### RANDOM FOREST- MODELO 4
+### RANDOM FOREST- MODEL 4
 ```{r}
 set.seed(314)
 
@@ -286,9 +283,9 @@ imp_rf
 plot(imp_rf)
 ```
 
-### Scoring dos 3 modelos de Decision Trees
+### Scoring of the 3 Decision Trees models
 ```{r}
-#Scoring dos 3 modelos acima
+#Scoring of the 3 models above
 pred_bagging <- predict(model_bagging ,newdata=dfTest)
 dfTest$Model_DT_bagging <- pred_bagging
 
@@ -309,7 +306,7 @@ options(warn=-1)
 cv <- trainControl(method = "repeatedcv", number = 10, savePredictions = TRUE)
 ```
 
-### SVM - Linear Kernel - MODELO 5
+### SVM - Linear Kernel - MODEL 5
 ```{r}
 model_SVM_LK <- train(Weekly_Sales~., data = dfTrain, method = "svmLinear", trControl = cv,  preProcess = c("center", "scale"))
 
@@ -323,7 +320,7 @@ imp_SVM_LK
 plot(imp_SVM_LK)
 ```
 
-### SVM - RBF Kernel- MODELO 6
+### SVM - RBF Kernel- MODEL 6
 ```{r}
 options(warn=-1)
 
@@ -340,7 +337,7 @@ imp_SVM_rbf
 plot(imp_SVM_rbf)
 ```
 
-### Scoring dos 2 modelos de SVM
+### Scoring of the 2 SVM models
 ```{r}
 pred_SVM_LK <- predict(model_SVM_LK, newdata=dfTest)
 dfTest$Model_SVM_LK <- pred_SVM_LK
@@ -352,7 +349,7 @@ dfTest$Model_SVM_rbf <- pred_SVM_rbf
 head(dfTest,10)
 ```
 
-## ALGORITMOS GENÉTICOS - MODELO 7
+## GENETIC ALGORITHMS - MODEL 7
 ```{r}
 registerDoParallel(4) 
 getDoParWorkers() 
@@ -389,22 +386,19 @@ dfTest$Model_AG <- pred_AG
 head(dfTest,10)
 ```
 
-# Conclusões
+# Conclusions
 
 
 
-Após tratar o dataset e executar os modelos, observei que obtive resultados relativamente próximos para os modelos de regressão linear, SVM e Algoritmos Genéticos. 
+After treating the dataset and running the models, I observed that I obtained relatively close results for the linear regression, SVM and Genetic Algorithms models.
 
-No caso da regressão linear, tentei fazer regularização Lasso e Ridge, porém não obtive bons resultados, por isso optei por deixar no trabalho a regressão linear com cross-validation sem regularização.
+In the case of linear regression, I tried to do Lasso and Ridge regularization, but I did not get good results, so I chose to leave linear regression with cross-validation without regularization at work.
 
-O principal parâmetro para selecionar o meu melhor modelo foi o Rsquared (R²), que indica a porcentagem da variância na variável dependente que as variáveis independentes explicam coletivamente. Rsquared mede a força da relação entre seu modelo e a variável dependente em uma escala conveniente de 0 a 100%.  
+The main parameter for selecting my best model was the Rsquared (R²), which indicates the percentage of variance in the dependent variable that the independent variables collectively explain. Rsquared measures the strength of the relationship between your model and the dependent variable on a convenient scale from 0 to 100%.
 
-Em um segundo plano, também levei em consideração a RMSE. Root Mean Square Error (RMSE) é o desvio padrão dos resíduos (erros de predição). Resíduos medem quão longe os pontos de dados da linha de regressão estão.
+In the background, I also took into account the RMSE. Root Mean Square Error (RMSE) is the standard deviation of residuals (prediction errors). Residuals measure how far the data points are from the regression line.
 
-O RMSE é uma medida de quão espalhados são esses resíduos. Em outras palavras, o RMSE informa o quão concentrados os dados estão em torno da linha de melhor ajuste. Números menores são melhores, com zero sendo um ajuste perfeito para os dados. Vale ressaltar que tanto Rsquared e RMSE avaliam a acurácia do modelo.
+The RMSE is a measure of how widespread these residues are. In other words, the RMSE tells you how concentrated the data is around the best-fit line. Smaller numbers are better, with zero being a perfect fit for the data. It is worth mentioning that both Rsquared and RMSE assess the accuracy of the model.
 
-Tomando o Rsquared como principal métrica para análise de performance de modelo, o modelo que apresentou melhores resultados foi o Modelo 3 (Árvores de Decisão com Boosting) com Rsquared de 0.9372519 e RMSE de 129846.3.
-
-
-
+Taking Rsquared as the main metric for model performance analysis, the model that presented the best results was Model 3 (Decision Trees with Boosting) with Rsquared of 0.9372519 and RMSE of 129846.3.
 
