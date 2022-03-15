@@ -11,7 +11,7 @@ output:
 # Tratamento dos dados
 
 ```{r}
-#IMPORTANDO BIBLIOTECAS
+#IMPORTANDO BIBLIOTECAS 2
 options(warn=-1)
 
 library(broom)
@@ -143,6 +143,8 @@ md_df <- for(i in 1:length(df)) {
               round(sum(is.na(df[ ,i]))/nrow(df),2)))
   
 }
+
+
 ```
 
 ### Redefinindo NAs
@@ -389,15 +391,19 @@ head(dfTest,10)
 
 # Conclusões
 
-Após tratar o dataset e executar os modelos, observei que obtive resultados relativamente próximos. Tentei inúmeras vezes rodar o modelo de redes neurais, mas não tive exito.
-
-No caso da regressão linear, tentei fazer regularização lasso e ridge, porém não obtive bons resultados, por isso optei por deixar no trabalho a regressão linear  
-com cross-validation sem regularização.
-
-Dentros os modelos testados, o modelo que apresentou melhores resultados foi
-o.... com Rsquared de.. e MSE de ...
 
 
+Após tratar o dataset e executar os modelos, observei que obtive resultados relativamente próximos para os modelos de regressão linear, SVM e Algoritmos Genéticos. 
+
+No caso da regressão linear, tentei fazer regularização Lasso e Ridge, porém não obtive bons resultados, por isso optei por deixar no trabalho a regressão linear com cross-validation sem regularização.
+
+O principal parâmetro para selecionar o meu melhor modelo foi o Rsquared (R²), que indica a porcentagem da variância na variável dependente que as variáveis independentes explicam coletivamente. Rsquared mede a força da relação entre seu modelo e a variável dependente em uma escala conveniente de 0 a 100%.  
+
+Em um segundo plano, também levei em consideração a RMSE. Root Mean Square Error (RMSE) é o desvio padrão dos resíduos (erros de predição). Resíduos medem quão longe os pontos de dados da linha de regressão estão.
+
+O RMSE é uma medida de quão espalhados são esses resíduos. Em outras palavras, o RMSE informa o quão concentrados os dados estão em torno da linha de melhor ajuste. Números menores são melhores, com zero sendo um ajuste perfeito para os dados. Vale ressaltar que tanto Rsquared e RMSE avaliam a acurácia do modelo.
+
+Tomando o Rsquared como principal métrica para análise de performance de modelo, o modelo que apresentou melhores resultados foi o Modelo 3 (Árvores de Decisão com Boosting) com Rsquared de 0.9372519 e RMSE de 129846.3.
 
 
 
